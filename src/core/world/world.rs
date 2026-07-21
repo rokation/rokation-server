@@ -2,6 +2,7 @@ use crate::core::{
     component::{component::Component, registry::ComponentRegistry},
     entity::entity::{Entity, EntityId, EntityIdGenerator},
     storage::storage::Storage,
+    world::error::{Result, WorldError},
 };
 
 pub struct World {
@@ -19,8 +20,14 @@ impl World {
         }
     }
 
-    pub fn insert_component<T: Component>(&mut self, id: EntityId, component: T) {
+    pub fn insert_component<T: Component>(&mut self, id: EntityId, component: T) -> Result<()> {
+        if !self.entities.contains(id) {
+            return Err(WorldError::EntityNotFound(id));
+        }
+
         self.components.storage::<T>().insert(id, component);
+
+        Ok(())
     }
 
     pub fn get_component<T: Component>(&mut self, id: EntityId) -> Option<&T> {
@@ -36,6 +43,17 @@ impl World {
         let entity = Entity::new(id);
         self.entities.insert(id, entity);
         id
+    }
+
+    pub fn despawn(&mut self, id: EntityId) -> Result<()> {
+        if !self.entities.contains(id) {
+            return Err(WorldError::EntityNotFound(id));
+        }
+
+        self.components.remove_entity(id);
+        self.entities.remove(id);
+
+        Ok(())
     }
 
     pub fn len(&self) -> usize {
