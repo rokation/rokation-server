@@ -1,0 +1,44 @@
+use crate::core::{
+    component::{component::Component, registry::ComponentRegistry},
+    entity::entity::{Entity, EntityId, EntityIdGenerator},
+    storage::storage::Storage,
+};
+
+pub struct World {
+    entities: Storage<Entity>,
+    components: ComponentRegistry,
+    ids: EntityIdGenerator,
+}
+
+impl World {
+    pub fn new() -> Self {
+        Self {
+            entities: Storage::<Entity>::new(),
+            components: ComponentRegistry::new(),
+            ids: EntityIdGenerator::default(),
+        }
+    }
+
+    pub fn insert_component<T: Component>(&mut self, id: EntityId, component: T) {
+        self.components.storage::<T>().insert(id, component);
+    }
+
+    pub fn get_component<T: Component>(&mut self, id: EntityId) -> Option<&T> {
+        self.components.storage::<T>().get(id)
+    }
+
+    pub fn remove_component<T: Component>(&mut self, id: EntityId) {
+        self.components.storage::<T>().remove(id)
+    }
+
+    pub fn spawn(&mut self) -> EntityId {
+        let id = self.ids.next();
+        let entity = Entity::new(id);
+        self.entities.insert(id, entity);
+        id
+    }
+
+    pub fn len(&self) -> usize {
+        self.entities.len()
+    }
+}
