@@ -1,6 +1,6 @@
 use crate::core::{
     component::{component::Component, registry::ComponentRegistry},
-    entity::entity::{Entity, EntityId, EntityIdGenerator},
+    entity::entity::{Entity, EntityId},
     error::{CoreError, Result},
     storage::storage::Storage,
 };
@@ -8,7 +8,6 @@ use crate::core::{
 pub struct World {
     entities: Storage<Entity>,
     components: ComponentRegistry,
-    ids: EntityIdGenerator,
 }
 
 impl World {
@@ -16,7 +15,6 @@ impl World {
         Self {
             entities: Storage::<Entity>::new(),
             components: ComponentRegistry::new(),
-            ids: EntityIdGenerator::default(),
         }
     }
 
@@ -39,9 +37,10 @@ impl World {
     }
 
     pub fn spawn(&mut self) -> EntityId {
-        let id = self.ids.next();
-        let entity = Entity::new(id);
-        self.entities.insert(id, entity);
+        let entity = Entity::new();
+        let id = entity.id();
+        self.entities.insert(entity.id(), entity);
+
         id
     }
 
