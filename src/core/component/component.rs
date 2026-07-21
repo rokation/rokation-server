@@ -1,9 +1,4 @@
-use std::{
-    any::{Any, TypeId},
-    collections::HashMap,
-};
-
-use crate::core::storage::storage::{ComponentStore, Storage};
+use std::any::Any;
 
 pub trait Component: Any {}
 

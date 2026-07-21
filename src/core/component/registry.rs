@@ -1,8 +1,8 @@
 use std::{any::TypeId, collections::HashMap};
 
 use crate::core::{
-    component::component::Component,
-    storage::storage::{ComponentStore, Storage},
+    component::{component::Component, store::ComponentStore},
+    storage::storage::Storage,
 };
 
 pub struct ComponentRegistry {
