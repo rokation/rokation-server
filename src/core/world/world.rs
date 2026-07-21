@@ -1,8 +1,8 @@
 use crate::core::{
     component::{component::Component, registry::ComponentRegistry},
     entity::entity::{Entity, EntityId, EntityIdGenerator},
+    error::{CoreError, Result},
     storage::storage::Storage,
-    world::error::{Result, WorldError},
 };
 
 pub struct World {
@@ -22,7 +22,7 @@ impl World {
 
     pub fn insert_component<T: Component>(&mut self, id: EntityId, component: T) -> Result<()> {
         if !self.entities.contains(id) {
-            return Err(WorldError::EntityNotFound(id));
+            return Err(CoreError::EntityNotFound(id));
         }
 
         self.components.storage::<T>().insert(id, component);
@@ -47,7 +47,7 @@ impl World {
 
     pub fn despawn(&mut self, id: EntityId) -> Result<()> {
         if !self.entities.contains(id) {
-            return Err(WorldError::EntityNotFound(id));
+            return Err(CoreError::EntityNotFound(id));
         }
 
         self.components.remove_entity(id);
