@@ -46,6 +46,10 @@ impl ComponentRegistry {
         self.storage::<T>()?.get(id)
     }
 
+    pub fn get_mut<T: Component>(&mut self, id: EntityId) -> Option<&mut T> {
+        self.storage_mut::<T>().get_mut(id)
+    }
+
     pub fn insert<T: Component>(&mut self, id: EntityId, component: T) -> bool {
         self.storage_mut::<T>().insert(id, component)
     }

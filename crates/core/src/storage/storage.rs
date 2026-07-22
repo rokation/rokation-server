@@ -28,6 +28,10 @@ impl<T> Storage<T> {
         self.data.get(&id)
     }
 
+    pub fn get_mut(&mut self, id: EntityId) -> Option<&mut T> {
+        self.data.get_mut(&id)
+    }
+
     pub fn len(&self) -> usize {
         self.data.len()
     }

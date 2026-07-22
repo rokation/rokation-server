@@ -45,8 +45,12 @@ impl World {
         Ok(())
     }
 
-    pub fn get<T: Component>(&mut self, id: EntityId) -> Option<&T> {
+    pub fn get<T: Component>(&self, id: EntityId) -> Option<&T> {
         self.components.get::<T>(id)
+    }
+
+    pub fn get_mut<T: Component>(&mut self, id: EntityId) -> Option<&mut T> {
+        self.components.get_mut::<T>(id)
     }
 
     pub fn remove<T: Component>(&mut self, id: EntityId) -> bool {
