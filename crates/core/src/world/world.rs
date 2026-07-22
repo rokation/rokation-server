@@ -5,6 +5,8 @@ use crate::{
     entity::entity::{Entity, EntityId},
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
+    foundation::position::Position,
+    geometry::point::Point3,
     query::query::Query,
     storage::storage::Storage,
 };
@@ -89,5 +91,9 @@ impl World {
 
     pub fn query<Q>(&self) -> Query<'_, Q> {
         Query::new(&self.components)
+    }
+
+    pub fn position(&self, id: EntityId) -> Option<&Point3> {
+        self.components.get::<Position>(id).map(|pos| &pos.point)
     }
 }
