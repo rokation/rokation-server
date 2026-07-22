@@ -87,7 +87,7 @@ impl World {
         self.events.drain()
     }
 
-    pub fn query<T: Component>(&self) -> Query<'_, T> {
-        self.components.query::<T>()
+    pub fn query<Q>(&self) -> Query<'_, Q> {
+        Query::new(&self.components)
     }
 }
