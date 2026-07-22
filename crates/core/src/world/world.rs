@@ -6,8 +6,9 @@ use crate::{
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
     foundation::position::Position,
-    geometry::point::Point3,
+    geometry::{bound::Bound, point::Point3},
     query::query::Query,
+    spatial::spatial::SpatialIndex,
     storage::storage::Storage,
 };
 
@@ -15,6 +16,7 @@ pub struct World {
     entities: Storage<Entity>,
     components: ComponentRegistry,
     events: EventQueue,
+    spatial: SpatialIndex,
 }
 
 impl World {
@@ -23,6 +25,7 @@ impl World {
             entities: Storage::<Entity>::new(),
             components: ComponentRegistry::new(),
             events: EventQueue::new(),
+            spatial: SpatialIndex::new(),
         }
     }
 
@@ -95,5 +98,18 @@ impl World {
 
     pub fn position(&self, id: EntityId) -> Option<&Point3> {
         self.components.get::<Position>(id).map(|pos| &pos.point)
+    }
+
+    pub fn query_area(&self, bounds: &Bound) -> Vec<EntityId> {
+        let mut result = Vec::new();
+        for id in self.spatial.entities() {
+            if let Some(pos) = self.position(*id) {
+                if bounds.contains(pos) {
+                    result.push(*id)
+                }
+            }
+        }
+
+        result
     }
 }
