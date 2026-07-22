@@ -35,6 +35,10 @@ impl<T> Storage<T> {
     pub fn contains(&self, id: EntityId) -> bool {
         self.data.contains_key(&id)
     }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&EntityId, &T)> {
+        self.data.iter()
+    }
 }
 
 // eg. impl Component<Position> ComponentStore for Storage<Position>
