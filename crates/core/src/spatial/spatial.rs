@@ -1,9 +1,8 @@
 use std::collections::HashSet;
 
-use crate::{
-    entity::entity::EntityId, foundation::position::Position, geometry::bound::Bound,
-    world::world::World,
-};
+use chrono::format::Item;
+
+use crate::{entity::entity::EntityId, geometry::bound::Bound, world::world::World};
 
 pub struct SpatialIndex {
     entities: HashSet<EntityId>,
@@ -38,5 +37,9 @@ impl SpatialIndex {
         }
 
         result
+    }
+
+    pub fn entities(&self) -> impl IntoIterator<Item = &EntityId> {
+        self.entities.iter()
     }
 }
