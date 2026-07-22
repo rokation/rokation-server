@@ -49,6 +49,7 @@ mod test {
             y: 50.0,
             z: 50.0,
         };
+
         let p2 = Point3 {
             x: 150.0,
             y: 150.0,
@@ -57,5 +58,50 @@ mod test {
 
         assert!(bound.contains(&p1));
         assert!(!bound.contains(&p2));
+    }
+
+    #[test]
+    fn test_bound_intersects() {
+        let b1 = Bound {
+            min: Point3 {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
+            max: Point3 {
+                x: 100.0,
+                y: 100.0,
+                z: 100.0,
+            },
+        };
+
+        let b2 = Bound {
+            min: Point3 {
+                x: 50.0,
+                y: 50.0,
+                z: 50.0,
+            },
+            max: Point3 {
+                x: 150.0,
+                y: 150.0,
+                z: 150.0,
+            },
+        };
+
+        let b3 = Bound {
+            min: Point3 {
+                x: 200.0,
+                y: 200.0,
+                z: 200.0,
+            },
+            max: Point3 {
+                x: 300.0,
+                y: 300.0,
+                z: 300.0,
+            },
+        };
+
+        assert!(b1.intersects(&b2));
+        assert!(!b2.intersects(&b3));
     }
 }
