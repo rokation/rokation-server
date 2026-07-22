@@ -5,6 +5,7 @@ use crate::{
     entity::entity::{Entity, EntityId},
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
+    query::query::Query,
     storage::storage::Storage,
 };
 
@@ -80,5 +81,9 @@ impl World {
 
     pub fn drain_events(&mut self) -> Vec<Event> {
         self.events.drain()
+    }
+
+    pub fn query<T: Component>(&self) -> Query<'_, T> {
+        self.components.query::<T>()
     }
 }
