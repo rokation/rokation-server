@@ -2,7 +2,7 @@ use std::ops::{Add, Sub};
 
 use crate::geometry::vector::Vector3;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,
