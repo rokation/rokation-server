@@ -10,6 +10,20 @@ impl Vector3 {
     pub fn length(&self) -> f64 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
+
+    pub fn normalize(&self) -> Option<Vector3> {
+        let length = self.length();
+
+        if length == 0.0 {
+            return None;
+        }
+
+        Some(Vector3 {
+            x: self.x / length,
+            y: self.z / length,
+            z: self.z / length,
+        })
+    }
 }
 
 impl Add for Vector3 {
