@@ -1,9 +1,6 @@
 use std::{
     any::Any,
-    collections::{
-        HashMap,
-        hash_map::{self, Iter},
-    },
+    collections::{HashMap, hash_map::Iter},
 };
 
 use crate::{
