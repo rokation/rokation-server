@@ -1,15 +1,22 @@
+use std::marker::PhantomData;
+
 use crate::{
-    component::component::Component, entity::entity::EntityId, query::iterator::QueryIter,
-    storage::storage::Storage,
+    component::{component::Component, registry::ComponentRegistry},
+    entity::entity::EntityId,
+    query::iterator::QueryIter,
 };
 
-pub struct Query<'a, T: Component> {
-    storage: Option<&'a Storage<T>>,
+pub struct Query<'a, Q> {
+    registry: &'a ComponentRegistry,
+    marker: PhantomData<Q>,
 }
 
-impl<'a, T: Component> Query<'a, T> {
-    pub fn new(storage: Option<&'a Storage<T>>) -> Self {
-        Self { storage }
+impl<'a, Q> Query<'a, Q> {
+    pub fn new(registry: &'a ComponentRegistry) -> Self {
+        Self {
+            registry,
+            marker: PhantomData,
+        }
     }
 }
 
@@ -18,6 +25,6 @@ impl<'a, T: Component> IntoIterator for Query<'a, T> {
     type IntoIter = QueryIter<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        QueryIter::new(self.storage)
+        QueryIter::new(self.registry.storage::<T>())
     }
 }
