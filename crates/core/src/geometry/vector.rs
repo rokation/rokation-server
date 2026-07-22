@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Mul, Sub};
 
 pub struct Vector3 {
     pub x: f64,
@@ -26,6 +26,18 @@ impl Sub for Vector3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Mul<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vector3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         }
     }
 }
