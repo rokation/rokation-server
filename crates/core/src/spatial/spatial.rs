@@ -1,6 +1,9 @@
 use std::collections::HashSet;
 
-use crate::entity::entity::EntityId;
+use crate::{
+    entity::entity::EntityId, foundation::position::Position, geometry::bound::Bound,
+    world::world::World,
+};
 
 pub struct SpatialIndex {
     entities: HashSet<EntityId>,
@@ -21,5 +24,19 @@ impl SpatialIndex {
 
     pub fn remove(&mut self, id: EntityId) {
         self.entities.remove(&id);
+    }
+
+    pub fn query(&self, bounds: &Bound, world: &World) -> Vec<EntityId> {
+        let mut result = Vec::new();
+
+        for id in &self.entities {
+            if let Some(position) = world.position(*id) {
+                if bounds.contains(position) {
+                    result.push(*id);
+                }
+            }
+        }
+
+        result
     }
 }
