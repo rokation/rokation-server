@@ -1,13 +1,17 @@
+use std::any::TypeId;
+
 use crate::core::{
     component::{component::Component, registry::ComponentRegistry},
     entity::entity::{Entity, EntityId},
     error::{CoreError, Result},
+    event::{event::Event, queue::EventQueue},
     storage::storage::Storage,
 };
 
 pub struct World {
     entities: Storage<Entity>,
     components: ComponentRegistry,
+    events: EventQueue,
 }
 
 impl World {
@@ -15,47 +19,66 @@ impl World {
         Self {
             entities: Storage::<Entity>::new(),
             components: ComponentRegistry::new(),
+            events: EventQueue::new(),
         }
     }
 
-    pub fn insert_component<T: Component>(&mut self, id: EntityId, component: T) -> Result<()> {
+    pub fn insert<T: Component>(&mut self, id: EntityId, component: T) -> Result<()> {
         if !self.entities.contains(id) {
             return Err(CoreError::EntityNotFound(id));
         }
 
-        self.components.storage::<T>().insert(id, component);
+        let added = self.components.insert(id, component);
+        if added {
+            self.events.push(Event::ComponentAdded {
+                id,
+                component: TypeId::of::<T>(),
+            });
+        } else {
+            self.events.push(Event::ComponentUpdated {
+                id,
+                component: TypeId::of::<T>(),
+            });
+        }
 
         Ok(())
     }
 
-    pub fn get_component<T: Component>(&mut self, id: EntityId) -> Option<&T> {
-        self.components.storage::<T>().get(id)
+    pub fn get<T: Component>(&mut self, id: EntityId) -> Option<&T> {
+        self.components.get::<T>(id)
     }
 
-    pub fn remove_component<T: Component>(&mut self, id: EntityId) {
-        self.components.storage::<T>().remove(id)
+    pub fn remove<T: Component>(&mut self, id: EntityId) -> bool {
+        self.components.remove::<T>(id)
     }
 
     pub fn spawn(&mut self) -> EntityId {
         let entity = Entity::new();
         let id = entity.id();
+
         self.entities.insert(entity.id(), entity);
+        self.events.push(Event::EntityCreated(id));
 
         id
     }
 
-    pub fn despawn(&mut self, id: EntityId) -> Result<()> {
+    pub fn despawn<T: Component>(&mut self, id: EntityId) -> Result<()> {
         if !self.entities.contains(id) {
             return Err(CoreError::EntityNotFound(id));
         }
 
-        self.components.remove_entity(id);
+        self.components.remove::<T>(id);
         self.entities.remove(id);
+        self.events.push(Event::EntityRemoved(id));
 
         Ok(())
     }
 
     pub fn len(&self) -> usize {
         self.entities.len()
+    }
+
+    pub fn drain_events(&mut self) -> Vec<Event> {
+        self.events.drain()
     }
 }
