@@ -3,7 +3,6 @@ use std::{any::TypeId, collections::HashMap};
 use crate::{
     component::{component::Component, store::ComponentStore},
     entity::entity::EntityId,
-    query::query::Query,
     storage::storage::Storage,
 };
 
@@ -32,7 +31,7 @@ impl ComponentRegistry {
             .unwrap()
     }
 
-    fn storage<T: Component>(&self) -> Option<&Storage<T>> {
+    pub(crate) fn storage<T: Component>(&self) -> Option<&Storage<T>> {
         let id = TypeId::of::<T>();
 
         self.stores
@@ -72,9 +71,5 @@ impl ComponentRegistry {
         for store in self.stores.values_mut() {
             store.remove_entity(entity);
         }
-    }
-
-    pub fn query<T: Component>(&self) -> Query<'_, T> {
-        Query::new(self.storage::<T>())
     }
 }
