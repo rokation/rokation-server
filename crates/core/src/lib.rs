@@ -5,5 +5,6 @@ pub mod event;
 pub mod foundation;
 pub mod geometry;
 pub mod query;
+pub mod spatial;
 pub mod storage;
 pub mod world;
