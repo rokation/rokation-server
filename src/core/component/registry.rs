@@ -17,7 +17,7 @@ impl ComponentRegistry {
         }
     }
 
-    pub fn storage<T: Component>(&mut self) -> &mut Storage<T> {
+    fn storage_mut<T: Component>(&mut self) -> &mut Storage<T> {
         let id = TypeId::of::<T>();
         if !self.stores.contains_key(&id) {
             self.stores.insert(id, Box::new(Storage::<T>::new()));
@@ -31,9 +31,41 @@ impl ComponentRegistry {
             .unwrap()
     }
 
-    pub fn remove_entity(&mut self, id: EntityId) {
+    fn storage<T: Component>(&self) -> Option<&Storage<T>> {
+        let id = TypeId::of::<T>();
+
+        self.stores
+            .get(&id)
+            .unwrap()
+            .as_any()
+            .downcast_ref::<Storage<T>>()
+    }
+
+    pub fn get<T: Component>(&self, id: EntityId) -> Option<&T> {
+        self.storage::<T>()?.get(id)
+    }
+
+    pub fn insert<T: Component>(&mut self, id: EntityId, component: T) -> bool {
+        self.storage_mut::<T>().insert(id, component)
+    }
+
+    pub fn remove<T: Component>(&mut self, id: EntityId) -> bool {
+        let type_id = TypeId::of::<T>();
+        let Some(store) = self.stores.get_mut(&type_id) else {
+            return false;
+        };
+
+        store
+            .as_any_mut()
+            .downcast_mut::<Storage<T>>()
+            .unwrap()
+            .remove(id)
+            .is_some()
+    }
+
+    pub fn remove_entity(&mut self, entity: EntityId) {
         for store in self.stores.values_mut() {
-            store.remove_entity(id);
+            store.remove_entity(entity);
         }
     }
 }
