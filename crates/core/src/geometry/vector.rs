@@ -6,6 +6,12 @@ pub struct Vector3 {
     pub z: f64,
 }
 
+impl Vector3 {
+    pub fn length(&self) -> f64 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+    }
+}
+
 impl Add for Vector3 {
     type Output = Vector3;
 
