@@ -16,12 +16,12 @@ impl<T> Storage<T> {
         }
     }
 
-    pub fn insert(&mut self, id: EntityId, value: T) {
-        self.data.insert(id, value);
+    pub fn insert(&mut self, id: EntityId, value: T) -> bool {
+        self.data.insert(id, value).is_none()
     }
 
-    pub fn remove(&mut self, id: EntityId) {
-        self.data.remove(&id);
+    pub fn remove(&mut self, id: EntityId) -> Option<T> {
+        self.data.remove(&id)
     }
 
     pub fn get(&self, id: EntityId) -> Option<&T> {
