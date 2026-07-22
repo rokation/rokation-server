@@ -1,4 +1,10 @@
-use std::{any::Any, collections::HashMap};
+use std::{
+    any::Any,
+    collections::{
+        HashMap,
+        hash_map::{self, Iter},
+    },
+};
 
 use crate::{
     component::{component::Component, store::ComponentStore},
@@ -40,7 +46,7 @@ impl<T> Storage<T> {
         self.data.contains_key(&id)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&EntityId, &T)> {
+    pub fn iter(&self) -> Iter<'_, EntityId, T> {
         self.data.iter()
     }
 }
