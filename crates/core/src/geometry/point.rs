@@ -2,10 +2,17 @@ use std::ops::{Add, Sub};
 
 use crate::geometry::vector::Vector3;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,
     pub z: f64,
+}
+
+impl Point3 {
+    pub fn distance(&self, other: &Point3) -> f64 {
+        (*self - *other).length()
+    }
 }
 
 impl Add<Vector3> for Point3 {
