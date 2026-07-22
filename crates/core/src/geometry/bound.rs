@@ -15,3 +15,38 @@ impl Bound {
             && point.z <= self.max.z
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_bound() {
+        let bound = Bound {
+            min: Point3 {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
+            max: Point3 {
+                x: 100.0,
+                y: 100.0,
+                z: 100.0,
+            },
+        };
+
+        let p1 = Point3 {
+            x: 50.0,
+            y: 50.0,
+            z: 50.0,
+        };
+        let p2 = Point3 {
+            x: 150.0,
+            y: 150.0,
+            z: 150.0,
+        };
+
+        assert!(bound.contains(&p1));
+        assert!(!bound.contains(&p2));
+    }
+}
