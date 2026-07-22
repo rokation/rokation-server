@@ -1,9 +1,9 @@
-[package]
-name = "rokation"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members=[
+    "crates/core"
+, "crates/gui"]
 
-[dependencies]
+[workspace.dependencies]
 anyhow = "1.0.104"
 dotenv = "0.15.0"
 serde = "1.0.229"

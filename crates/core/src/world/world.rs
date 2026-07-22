@@ -1,6 +1,6 @@
 use std::any::TypeId;
 
-use crate::core::{
+use crate::{
     component::{component::Component, registry::ComponentRegistry},
     entity::entity::{Entity, EntityId},
     error::{CoreError, Result},

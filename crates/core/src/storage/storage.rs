@@ -1,6 +1,6 @@
 use std::{any::Any, collections::HashMap};
 
-use crate::core::{
+use crate::{
     component::{component::Component, store::ComponentStore},
     entity::entity::EntityId,
 };

@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::core::entity::entity::EntityId;
+use crate::entity::entity::EntityId;
 
 pub trait ComponentStore {
     fn as_any(&self) -> &dyn Any;

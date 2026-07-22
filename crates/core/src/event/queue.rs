@@ -1,4 +1,4 @@
-use crate::core::event::event::Event;
+use crate::event::event::Event;
 
 pub struct EventQueue {
     events: Vec<Event>,

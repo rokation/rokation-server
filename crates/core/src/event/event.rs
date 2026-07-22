@@ -1,6 +1,6 @@
 use std::any::TypeId;
 
-use crate::core::entity::entity::EntityId;
+use crate::entity::entity::EntityId;
 
 #[derive(Debug)]
 pub enum Event {
