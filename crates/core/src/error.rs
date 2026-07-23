@@ -1,3 +1,5 @@
+use std::any::TypeId;
+
 use thiserror::Error;
 
 use crate::entity::entity::EntityId;
@@ -6,6 +8,9 @@ use crate::entity::entity::EntityId;
 pub enum CoreError {
     #[error("Entity not found")]
     EntityNotFound(EntityId),
+
+    #[error("{0:?} not found")]
+    ComponentNotFound(TypeId),
 }
 
 pub type Result<T> = std::result::Result<T, CoreError>;
