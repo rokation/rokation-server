@@ -1,12 +1,12 @@
+use crate::geometry::vector::Vector3;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Velocity {
-    pub vx: f64,
-    pub vy: f64,
-    pub vz: f64,
+    pub linear: Vector3,
 }
 
 impl Velocity {
-    pub fn new(vx: f64, vy: f64, vz: f64) -> Self {
-        Self { vx, vy, vz }
+    pub fn new(linear: Vector3) -> Self {
+        Self { linear }
     }
 }
