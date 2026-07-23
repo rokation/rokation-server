@@ -10,6 +10,10 @@ pub struct Point3 {
 }
 
 impl Point3 {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
+    }
+
     pub fn distance(&self, other: &Point3) -> f64 {
         (*self - *other).length()
     }
