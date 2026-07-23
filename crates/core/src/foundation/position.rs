@@ -6,10 +6,8 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Self {
-            point: Point3 { x, y, z },
-        }
+    pub fn new(point: Point3) -> Self {
+        Self { point }
     }
 }
 
@@ -19,7 +17,7 @@ mod test {
 
     #[test]
     fn test_create_position() {
-        let position = Position::new(10.0, 10.0, 0.0);
+        let position = Position::new(Point3::new(10.0, 10.0, 0.0));
 
         assert_eq!(position.point.x, 10.0);
         assert_eq!(position.point.y, 10.0);
@@ -28,8 +26,8 @@ mod test {
 
     #[test]
     fn test_compare_position() {
-        let position_a = Position::new(10.0, 10.0, 0.0);
-        let position_b = Position::new(10.0, 10.0, 0.0);
+        let position_a = Position::new(Point3::new(10.0, 10.0, 0.0));
+        let position_b = Position::new(Point3::new(10.0, 10.0, 0.0));
 
         assert_eq!(position_a, position_b);
     }
