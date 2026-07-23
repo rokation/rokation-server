@@ -9,6 +9,12 @@ impl Position {
     pub fn new(point: Point3) -> Self {
         Self { point }
     }
+
+    pub fn zero() -> Self {
+        Self {
+            point: Point3::new(0.0, 0.0, 0.0),
+        }
+    }
 }
 
 #[cfg(test)]
