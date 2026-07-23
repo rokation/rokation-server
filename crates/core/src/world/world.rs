@@ -6,7 +6,7 @@ use crate::{
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
     foundation::position::Position,
-    geometry::{bound::Bound, point::Point3},
+    geometry::{bound::Bounds, point::Point3},
     query::query::Query,
     spatial::spatial::SpatialIndex,
     storage::storage::Storage,
@@ -25,8 +25,40 @@ impl World {
             entities: Storage::<Entity>::new(),
             components: ComponentRegistry::new(),
             events: EventQueue::new(),
-            spatial: SpatialIndex::new(),
+            spatial: SpatialIndex::new(100.0),
         }
+    }
+
+    pub fn set_position(&mut self, id: EntityId, position: Position) -> Result<()> {
+        if !self.entities.contains(id) {
+            return Err(CoreError::EntityNotFound(id));
+        }
+
+        let new_point = position.point;
+
+        let old_position = self.position(id).copied();
+        let added = self.components.insert(id, position);
+
+        match old_position {
+            Some(old) => {
+                self.spatial.move_entity(id, &old, &new_point);
+            }
+            None => self.spatial.insert(id, &new_point),
+        }
+
+        if added {
+            self.events.push(Event::ComponentAdded {
+                id,
+                component: TypeId::of::<Position>(),
+            });
+        } else {
+            self.events.push(Event::ComponentUpdated {
+                id,
+                component: TypeId::of::<Position>(),
+            });
+        }
+
+        Ok(())
     }
 
     pub fn insert<T: Component>(&mut self, id: EntityId, component: T) -> Result<()> {
@@ -34,11 +66,8 @@ impl World {
             return Err(CoreError::EntityNotFound(id));
         }
 
-        if TypeId::of::<T>() == TypeId::of::<Position>() {
-            self.spatial.insert(id);
-        }
-
         let added = self.components.insert(id, component);
+
         if added {
             self.events.push(Event::ComponentAdded {
                 id,
@@ -81,9 +110,12 @@ impl World {
             return Err(CoreError::EntityNotFound(id));
         }
 
+        if let Some(position) = self.position(id).cloned() {
+            self.spatial.remove(id, &position);
+        }
+
         self.components.remove_entity(id);
         self.entities.remove(id);
-        self.spatial.remove(id);
         self.events.push(Event::EntityRemoved(id));
 
         Ok(())
@@ -105,16 +137,7 @@ impl World {
         Query::new(&self.components)
     }
 
-    pub fn query_area(&self, bounds: &Bound) -> Vec<EntityId> {
-        let mut result = Vec::new();
-        for id in self.spatial.entities() {
-            if let Some(pos) = self.position(*id) {
-                if bounds.contains(pos) {
-                    result.push(*id)
-                }
-            }
-        }
-
-        result
+    pub fn query_area(&self, bounds: &Bounds) -> Vec<EntityId> {
+        self.spatial.query(bounds, self)
     }
 }
