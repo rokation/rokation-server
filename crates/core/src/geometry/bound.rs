@@ -1,11 +1,11 @@
 use crate::geometry::point::Point3;
 
-pub struct Bound {
+pub struct Bounds {
     pub min: Point3,
     pub max: Point3,
 }
 
-impl Bound {
+impl Bounds {
     pub fn contains(&self, point: &Point3) -> bool {
         point.x >= self.min.x
             && point.x <= self.max.x
@@ -15,7 +15,7 @@ impl Bound {
             && point.z <= self.max.z
     }
 
-    pub fn intersects(&self, other: &Bound) -> bool {
+    pub fn intersects(&self, other: &Bounds) -> bool {
         self.min.x <= other.max.x
             && self.max.x >= other.min.x
             && self.min.y <= other.max.y
@@ -31,7 +31,7 @@ mod test {
 
     #[test]
     fn test_bound() {
-        let bound = Bound {
+        let bounds = Bounds {
             min: Point3 {
                 x: 0.0,
                 y: 0.0,
@@ -56,13 +56,13 @@ mod test {
             z: 150.0,
         };
 
-        assert!(bound.contains(&p1));
-        assert!(!bound.contains(&p2));
+        assert!(bounds.contains(&p1));
+        assert!(!bounds.contains(&p2));
     }
 
     #[test]
     fn test_bound_intersects() {
-        let b1 = Bound {
+        let b1 = Bounds {
             min: Point3 {
                 x: 0.0,
                 y: 0.0,
@@ -75,7 +75,7 @@ mod test {
             },
         };
 
-        let b2 = Bound {
+        let b2 = Bounds {
             min: Point3 {
                 x: 50.0,
                 y: 50.0,
@@ -88,7 +88,7 @@ mod test {
             },
         };
 
-        let b3 = Bound {
+        let b3 = Bounds {
             min: Point3 {
                 x: 200.0,
                 y: 200.0,
