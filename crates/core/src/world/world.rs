@@ -6,7 +6,7 @@ use crate::{
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
     foundation::position::Position,
-    geometry::{bound::Bounds, point::Point3},
+    geometry::{bound::Bounds, point::Point3, vector::Vector3},
     query::query::Query,
     spatial::spatial::SpatialIndex,
     storage::storage::Storage,
@@ -139,5 +139,17 @@ impl World {
 
     pub fn query_area(&self, bounds: &Bounds) -> Vec<EntityId> {
         self.spatial.query(bounds, self)
+    }
+
+    pub fn translate(&mut self, id: EntityId, delta: Vector3) -> Result<()> {
+        let current = self
+            .components
+            .get::<Position>(id)
+            .ok_or(CoreError::EntityNotFound(id))?;
+
+        let next = current.point + delta;
+        self.set_position(id, Position::new(next))?;
+
+        Ok(())
     }
 }
