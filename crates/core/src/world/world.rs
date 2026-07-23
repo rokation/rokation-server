@@ -34,6 +34,10 @@ impl World {
             return Err(CoreError::EntityNotFound(id));
         }
 
+        if TypeId::of::<T>() == TypeId::of::<Position>() {
+            self.spatial.insert(id);
+        }
+
         let added = self.components.insert(id, component);
         if added {
             self.events.push(Event::ComponentAdded {
@@ -72,13 +76,14 @@ impl World {
         id
     }
 
-    pub fn despawn<T: Component>(&mut self, id: EntityId) -> Result<()> {
+    pub fn despawn(&mut self, id: EntityId) -> Result<()> {
         if !self.entities.contains(id) {
             return Err(CoreError::EntityNotFound(id));
         }
 
-        self.components.remove::<T>(id);
+        self.components.remove_entity(id);
         self.entities.remove(id);
+        self.spatial.remove(id);
         self.events.push(Event::EntityRemoved(id));
 
         Ok(())
@@ -92,12 +97,12 @@ impl World {
         self.events.drain()
     }
 
-    pub fn query<Q>(&self) -> Query<'_, Q> {
-        Query::new(&self.components)
-    }
-
     pub fn position(&self, id: EntityId) -> Option<&Point3> {
         self.components.get::<Position>(id).map(|pos| &pos.point)
+    }
+
+    pub fn query<Q>(&self) -> Query<'_, Q> {
+        Query::new(&self.components)
     }
 
     pub fn query_area(&self, bounds: &Bound) -> Vec<EntityId> {
