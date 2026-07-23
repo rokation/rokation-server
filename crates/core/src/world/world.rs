@@ -1,11 +1,11 @@
-use std::any::TypeId;
+use std::{any::TypeId, time::Duration};
 
 use crate::{
     component::{component::Component, registry::ComponentRegistry},
     entity::entity::{Entity, EntityId},
     error::{CoreError, Result},
     event::{event::Event, queue::EventQueue},
-    foundation::position::Position,
+    foundation::{position::Position, velocity::Velocity},
     geometry::{bound::Bounds, point::Point3, vector::Vector3},
     query::query::Query,
     spatial::spatial::SpatialIndex,
@@ -149,6 +149,37 @@ impl World {
 
         let next = current.point + delta;
         self.set_position(id, Position::new(next))?;
+
+        Ok(())
+    }
+
+    pub fn move_by_velocity(&mut self, id: EntityId, dt: Duration) -> Result<()> {
+        let position = self
+            .get::<Position>(id)
+            .copied()
+            .ok_or(CoreError::ComponentNotFound(TypeId::of::<Position>()))?;
+
+        let velocity = self
+            .get::<Velocity>(id)
+            .copied()
+            .ok_or(CoreError::ComponentNotFound(TypeId::of::<Velocity>()))?;
+
+        let delta = velocity.linear * dt.as_secs_f64();
+        let next = Position::new(position.point + delta);
+
+        self.set_position(id, next)
+    }
+
+    pub fn update(&mut self, dt: Duration) -> Result<()> {
+        let targets: Vec<EntityId> = self
+            .query::<Velocity>()
+            .into_iter()
+            .map(|(id, _)| *id)
+            .collect::<Vec<_>>();
+
+        for id in targets {
+            self.move_by_velocity(id, dt)?;
+        }
 
         Ok(())
     }
