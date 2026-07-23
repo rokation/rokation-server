@@ -34,11 +34,7 @@ impl ComponentRegistry {
     pub(crate) fn storage<T: Component>(&self) -> Option<&Storage<T>> {
         let id = TypeId::of::<T>();
 
-        self.stores
-            .get(&id)
-            .unwrap()
-            .as_any()
-            .downcast_ref::<Storage<T>>()
+        self.stores.get(&id)?.as_any().downcast_ref::<Storage<T>>()
     }
 
     pub fn get<T: Component>(&self, id: EntityId) -> Option<&T> {
