@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Position {
     lat: f64,
     lon: f64,
