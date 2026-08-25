@@ -1,14 +1,20 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use std::{collections::HashMap, sync::Arc};
+
+use axum::{
+    Json,
+    http::StatusCode,
+    response::{ErrorResponse, IntoResponse},
+};
+use rokation_core::world::{World, WorldId};
+use tokio::sync::Mutex;
+
+pub mod http;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub worlds: Arc<Mutex<HashMap<WorldId, World>>>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub enum AppError {
+    NotFound,
 }
