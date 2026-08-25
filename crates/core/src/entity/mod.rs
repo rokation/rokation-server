@@ -1,8 +1,9 @@
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub type EntityId = Uuid;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum EntityKind {
     Drone,
     Robot,
@@ -12,7 +13,7 @@ pub enum EntityKind {
     Soldier,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize)]
 pub struct Entity {
     id: EntityId,
     kind: EntityKind,
