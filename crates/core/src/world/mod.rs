@@ -1,29 +1,28 @@
 use std::{collections::HashMap, sync::Arc};
 
-use serde::Serialize;
+use crate::{
+    entity::{Entity, EntityId, EntityKind},
+    geometry::{mbr::Mbr, vector::Point3},
+    spatial::rtree::RTree,
+};
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
-use crate::{
-    component::position::Position,
-    entity::{Entity, EntityId, EntityKind},
-};
-
 pub type WorldId = Uuid;
 
-#[derive(Clone, Serialize)]
+#[derive(Clone)]
 pub struct World {
-    id: WorldId,
-    entities: HashMap<EntityId, Entity>,
-    positions: HashMap<EntityId, Position>,
+    pub id: WorldId,
+    pub spatial_index: RTree,
+    pub entities: HashMap<EntityId, Entity>,
 }
 
 impl World {
     pub fn new() -> Self {
         Self {
             id: Uuid::new_v4(),
+            spatial_index: RTree::new(),
             entities: HashMap::new(),
-            positions: HashMap::new(),
         }
     }
 
@@ -32,9 +31,14 @@ impl World {
     }
 
     pub fn spawn(&mut self, kind: EntityKind) -> EntityId {
-        let e = Entity::new(kind);
-        self.insert(e);
-        e.id()
+        let entity = Entity::new(kind);
+        let id = entity.id();
+
+        let mbr = Mbr::from_point(entity.transform.position);
+
+        self.insert(entity);
+        self.spatial_index.insert(id, mbr);
+        entity.id
     }
 
     pub fn despawn(&mut self, entity_id: EntityId) {
@@ -45,28 +49,38 @@ impl World {
         self.entities.insert(entity.id(), entity);
     }
 
-    pub fn get_entities(&self) -> impl Iterator<Item = (&EntityId, &Entity)> {
-        self.entities.iter()
+    pub fn query_area(&self, query: &Mbr) -> Vec<EntityId> {
+        self.spatial_index.search(&query)
     }
 
-    pub fn get_mut_entities(&mut self) -> impl Iterator<Item = (&EntityId, &mut Entity)> {
-        self.entities.iter_mut()
+    pub fn get(&self, entity_id: EntityId) -> Option<&Entity> {
+        self.entities.get(&entity_id)
     }
 
-    pub fn into_entities(self) -> impl Iterator<Item = (EntityId, Entity)> {
-        self.entities.into_iter()
+    pub fn get_mut(&mut self, entity_id: EntityId) -> Option<&mut Entity> {
+        self.entities.get_mut(&entity_id)
     }
 
-    pub fn get_positions(&self) -> impl Iterator<Item = (&EntityId, &Position)> {
-        self.positions.iter()
+    pub fn entities(&mut self) -> impl Iterator<Item = &Entity> {
+        self.entities.values()
     }
 
-    pub fn update_position(&mut self, entity_id: EntityId, position: Position) {
-        self.positions.insert(entity_id, position);
+    pub fn entities_mut(&mut self) -> impl Iterator<Item = &mut Entity> {
+        self.entities.values_mut()
     }
 
-    pub fn get_position(&mut self, entity_id: EntityId) -> Option<&Position> {
-        self.positions.get(&entity_id)
+    pub fn sync_spatial_index(&mut self) {
+        let updates: Vec<(EntityId, Point3)> = self
+            .entities
+            .values()
+            .map(|entity| (entity.id(), entity.transform.position))
+            .collect();
+
+        for (entity_id, position) in updates {
+            self.spatial_index.remove(entity_id);
+            self.spatial_index
+                .insert(entity_id, Mbr::from_point(position));
+        }
     }
 }
 

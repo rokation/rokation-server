@@ -18,6 +18,13 @@ impl Mbr {
         }
     }
 
+    pub fn from_radius(center: Point3, radius: f64) -> Self {
+        Self {
+            min: Point3::new(center.x - radius, center.y - radius, center.z - radius),
+            max: Point3::new(center.x + radius, center.y + radius, center.z + radius),
+        }
+    }
+
     pub fn intersects(&self, other: &Mbr) -> bool {
         self.min.x <= other.max.x
             && self.max.x >= other.min.x

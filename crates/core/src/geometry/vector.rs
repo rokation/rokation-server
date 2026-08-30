@@ -1,6 +1,8 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, AddAssign, Mul, Sub};
 
-#[derive(Debug, Clone, Copy, Default)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -71,7 +73,15 @@ impl Mul<f64> for Vec3 {
     }
 }
 
-#[derive(Debug, Clone, Copy, Default)]
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, other: Vec3) {
+        self.x += other.x;
+        self.y += other.y;
+        self.z += other.z;
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,
@@ -81,6 +91,14 @@ pub struct Point3 {
 impl Point3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
+    }
+
+    pub fn distance(&self, other: &Point3) -> f64 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        let dz = self.z - other.z;
+
+        (dx * dx + dy * dy + dz * dz).sqrt()
     }
 }
 
@@ -105,5 +123,21 @@ impl Sub for Point3 {
             y: self.y - other.y,
             z: self.z - other.z,
         }
+    }
+}
+
+impl AddAssign for Point3 {
+    fn add_assign(&mut self, other: Point3) {
+        self.x += other.x;
+        self.y += other.y;
+        self.z += other.z;
+    }
+}
+
+impl AddAssign<Vec3> for Point3 {
+    fn add_assign(&mut self, vector: Vec3) {
+        self.x += vector.x;
+        self.y += vector.y;
+        self.z += vector.z;
     }
 }
