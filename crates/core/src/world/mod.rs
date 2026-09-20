@@ -5,7 +5,6 @@ use crate::{
     geometry::{mbr::Mbr, vector::Point3},
     spatial::rtree::RTree,
 };
-use tokio::sync::Mutex;
 use uuid::Uuid;
 
 pub type WorldId = Uuid;
@@ -13,8 +12,8 @@ pub type WorldId = Uuid;
 #[derive(Clone)]
 pub struct World {
     pub id: WorldId,
-    pub spatial_index: RTree,
     pub entities: HashMap<EntityId, Entity>,
+    pub events: Vec<Event>,
 }
 
 impl World {
@@ -81,26 +80,5 @@ impl World {
             self.spatial_index
                 .insert(entity_id, Mbr::from_point(position));
         }
-    }
-}
-
-pub struct WorldManager {
-    worlds: HashMap<WorldId, World>,
-}
-
-impl WorldManager {
-    pub fn new() -> Self {
-        Self {
-            worlds: HashMap::new(),
-        }
-    }
-
-    pub async fn get(&self, world_id: WorldId) -> Option<&World> {
-        self.worlds.get(&world_id)
-    }
-
-    pub async fn insert(&mut self, world: Arc<Mutex<World>>) {
-        let w = world.lock().await;
-        self.worlds.insert(w.id(), w.clone());
     }
 }
