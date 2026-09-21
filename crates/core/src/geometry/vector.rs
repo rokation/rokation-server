@@ -2,7 +2,7 @@ use std::ops::{Add, AddAssign, Mul, Sub};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -81,7 +81,7 @@ impl AddAssign for Vec3 {
     }
 }
 
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
 pub struct Point3 {
     pub x: f64,
     pub y: f64,
