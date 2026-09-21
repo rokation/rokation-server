@@ -1,6 +1,6 @@
 [workspace]
 members=[
-    "crates/core", "crates/server", "crates/simulator",
+    "crates/core",
 ]
 
 [workspace.dependencies]
