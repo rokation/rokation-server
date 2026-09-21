@@ -1,7 +1,7 @@
-use std::{collections::HashMap, io::ErrorKind};
+use std::collections::HashMap;
 
 use crate::{
-    command::Command,
+    command::{Command, CommandResult},
     component::{Position, Velocity, lla::Lla},
     entity::{Entity, EntityId, EntityKind, EntitySnapshot},
     event::Event::{self, EntityDestroyed, EntityMoved, EntitySpawned},
@@ -196,26 +196,38 @@ impl World {
             .map(|(id, _)| id.as_str())
     }
 
-    pub fn execute(&mut self, command: Command) -> Option<EntityId> {
+    pub fn execute(&mut self, command: Command) -> CommandResult {
         match command {
-            Command::SpawnEntity { kind } => Some(self.spawn(kind)),
+            Command::SpawnEntity { kind } => CommandResult::EntityCreated(self.spawn(kind)),
             Command::DestroyEntity { entity_id } => {
-                self.destroy(entity_id);
-                None
+                if self.contains(entity_id) {
+                    self.destroy(entity_id);
+                    CommandResult::Success
+                } else {
+                    CommandResult::NotFound
+                }
             }
             Command::SetPosition {
                 entity_id,
                 position,
             } => {
-                self.set_position(entity_id, position);
-                None
+                if self.contains(entity_id) {
+                    self.set_position(entity_id, position);
+                    CommandResult::Success
+                } else {
+                    CommandResult::NotFound
+                }
             }
             Command::SetVelocity {
                 entity_id,
                 velocity,
             } => {
-                self.set_velocity(entity_id, velocity);
-                None
+                if self.contains(entity_id) {
+                    self.set_velocity(entity_id, velocity);
+                    CommandResult::Success
+                } else {
+                    CommandResult::NotFound
+                }
             }
         }
     }

@@ -82,7 +82,7 @@ impl Entity {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct EntitySnapshot {
     pub id: EntityId,
     pub kind: EntityKind,
