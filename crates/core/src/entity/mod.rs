@@ -73,8 +73,8 @@ impl Entity {
 
     pub fn snapshot(&self) -> EntitySnapshot {
         EntitySnapshot {
-            id: self.id,
-            kind: self.kind,
+            entity_id: self.id,
+            entity_kind: self.kind,
             lla: self.lla,
             position: self.position,
             velocity: self.velocity,
@@ -84,8 +84,8 @@ impl Entity {
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct EntitySnapshot {
-    pub id: EntityId,
-    pub kind: EntityKind,
+    pub entity_id: EntityId,
+    pub entity_kind: EntityKind,
     pub lla: Lla,
     pub position: Position,
     pub velocity: Velocity,

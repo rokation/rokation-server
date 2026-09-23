@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use crate::{
     command::{Command, CommandResult},
+    component::lla::Lla,
     entity::EntitySnapshot,
     event::Event,
     world::{World, WorldId},
@@ -70,5 +71,17 @@ impl Runtime {
 
     pub fn tick_rate() -> Duration {
         Duration::from_millis(16)
+    }
+
+    pub fn origin(&self) -> Lla {
+        self.world.origin()
+    }
+
+    pub fn set_origin(&mut self, origin: Lla) {
+        self.world.set_origin(origin)
+    }
+
+    pub fn entity_count(&self) -> usize {
+        self.world.entities_count()
     }
 }

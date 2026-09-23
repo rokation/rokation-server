@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    component::{Position, Velocity},
+    component::{Position, Velocity, lla::Lla},
     entity::{EntityId, EntityKind},
 };
 
@@ -9,10 +9,14 @@ use crate::{
 #[serde(tag = "command")]
 pub enum Command {
     SpawnEntity {
-        kind: EntityKind,
+        entity_kind: EntityKind,
     },
     DestroyEntity {
         entity_id: EntityId,
+    },
+    SetLla {
+        entity_id: EntityId,
+        lla: Lla,
     },
     SetPosition {
         entity_id: EntityId,
@@ -29,4 +33,10 @@ pub enum CommandResult {
     EntityCreated(EntityId),
     Success,
     NotFound,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CommandResponse {
+    pub success: bool,
+    pub result: CommandResult,
 }

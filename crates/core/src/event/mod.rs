@@ -9,3 +9,8 @@ pub enum Event {
     EntityMoved(EntitySnapshot),
     EntityDestroyed(EntityId),
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EventMessage {
+    pub event: Event,
+}

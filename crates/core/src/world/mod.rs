@@ -38,8 +38,8 @@ impl World {
         self.origin
     }
 
-    pub fn spawn(&mut self, kind: EntityKind) -> EntityId {
-        let entity = Entity::new(kind);
+    pub fn spawn(&mut self, entity_kind: EntityKind) -> EntityId {
+        let entity = Entity::new(entity_kind);
         let id = entity.id();
         let snapshot = entity.snapshot();
 
@@ -198,10 +198,20 @@ impl World {
 
     pub fn execute(&mut self, command: Command) -> CommandResult {
         match command {
-            Command::SpawnEntity { kind } => CommandResult::EntityCreated(self.spawn(kind)),
+            Command::SpawnEntity { entity_kind } => {
+                CommandResult::EntityCreated(self.spawn(entity_kind))
+            }
             Command::DestroyEntity { entity_id } => {
                 if self.contains(entity_id) {
                     self.destroy(entity_id);
+                    CommandResult::Success
+                } else {
+                    CommandResult::NotFound
+                }
+            }
+            Command::SetLla { entity_id, lla } => {
+                if self.contains(entity_id) {
+                    self.set_lla(entity_id, lla);
                     CommandResult::Success
                 } else {
                     CommandResult::NotFound
