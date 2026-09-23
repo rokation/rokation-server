@@ -5,6 +5,5 @@ pub mod error;
 pub mod event;
 pub mod geometry;
 pub mod message;
-pub mod polygon;
 pub mod runtime;
 pub mod world;

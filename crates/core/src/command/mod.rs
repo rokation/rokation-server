@@ -26,6 +26,9 @@ pub enum Command {
         entity_id: EntityId,
         velocity: Velocity,
     },
+    SetPolygon {
+        vertices: Vec<Lla>,
+    },
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]

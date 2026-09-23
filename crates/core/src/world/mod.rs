@@ -17,6 +17,7 @@ pub struct World {
     pub entities: HashMap<EntityId, Entity>,
     pub external_ids: HashMap<String, EntityId>,
     pub events: Vec<Event>,
+    pub polygons: Vec<Vec<Lla>>,
 }
 
 impl World {
@@ -27,6 +28,7 @@ impl World {
             entities: HashMap::new(),
             external_ids: HashMap::new(),
             events: Vec::new(),
+            polygons: Vec::new(),
         }
     }
 
@@ -104,6 +106,10 @@ impl World {
         } else {
             false
         }
+    }
+
+    pub fn set_polygon(&mut self, vertices: Vec<Lla>) {
+        self.polygons.push(vertices);
     }
 
     pub fn update(&mut self, dt: f64) {
@@ -238,6 +244,10 @@ impl World {
                 } else {
                     CommandResult::NotFound
                 }
+            }
+            Command::SetPolygon { vertices } => {
+                self.set_polygon(vertices);
+                CommandResult::Success
             }
         }
     }
